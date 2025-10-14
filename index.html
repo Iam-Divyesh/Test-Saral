@@ -1,0 +1,882 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saral AI - LinkedIn Recruiter Assistant</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        .main-container {
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .brand-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .brand-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            border: none;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .search-card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem;
+            border-bottom: none;
+        }
+
+        .search-card-header h5 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .search-card-body {
+            padding: 2rem;
+        }
+
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--light-color);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+            background: white;
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .query-preview {
+            background: linear-gradient(135deg, #e0f2fe 0%, #f1f8ff 100%);
+            border: 2px solid var(--secondary-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .query-preview h6 {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .results-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .results-summary {
+            background: linear-gradient(135deg, var(--success-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .pagination-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+        }
+
+        .pagination-info {
+            background: var(--light-color);
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-color);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--light-color) 0%, #ffffff 100%);
+            padding: 2rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .profile-headline {
+            color: #6b7280;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .score-excellent { background: var(--success-color); color: white; }
+        .score-good { background: var(--primary-color); color: white; }
+        .score-fair { background: var(--warning-color); color: white; }
+        .score-poor { background: var(--danger-color); color: white; }
+        .score-none { background: #6b7280; color: white; }
+
+        .skill-tag {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin: 0.2rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-icon {
+            width: 20px;
+            color: var(--primary-color);
+            margin-right: 0.75rem;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .brand-header h1 { font-size: 2rem; }
+            .brand-header p { font-size: 1rem; }
+            .search-card-header, .search-card-body { padding: 1.5rem; }
+            .results-summary { padding: 1.5rem; }
+            .profile-header { padding: 1.5rem; }
+            .stat-number { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container">
+            <!-- Brand Header -->
+            <div class="brand-header">
+                <h1><i class="fas fa-brain me-3"></i>Saral AI</h1>
+                <p>Intelligent LinkedIn Recruiter Assistant</p>
+            </div>
+
+            <!-- Search Section -->
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-xl-8">
+                    <div class="search-card">
+                        <div class="search-card-header">
+                            <h5><i class="fas fa-search me-3"></i>Find Your Perfect Candidates</h5>
+                        </div>
+                        <div class="search-card-body">
+                            <form id="searchForm">
+                                <div class="mb-4">
+                                    <label for="queryInput" class="form-label fw-semibold mb-3">Describe the candidate you're looking for:</label>
+                                    <textarea class="form-control" id="queryInput" rows="4" 
+                                        placeholder="e.g., Looking for a Senior Python Developer with Django experience, 5+ years, based in Mumbai or Bangalore"></textarea>
+                                </div>
+                                <div class="d-flex gap-3 justify-content-end">
+                                    <button type="button" class="btn btn-outline-primary" id="enhanceBtn">
+                                        <i class="fas fa-magic me-2"></i>Enhance Query
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="searchBtn">
+                                        <i class="fas fa-search me-2"></i>Search Candidates
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Query Preview -->
+                            <div id="queryPreview" class="query-preview" style="display: none;">
+                                <h6><i class="fas fa-eye me-2"></i>Query Analysis</h6>
+                                <div id="previewContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" style="display: none;">
+                <!-- Results Summary -->
+                <div class="results-container fade-in">
+                    <div class="results-summary">
+                        <div class="row" id="resultsSummary">
+                            <!-- Summary will be injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination Info -->
+                <div id="paginationInfo" class="pagination-card">
+                    <div class="pagination-info text-center">
+                        <!-- Pagination info will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Matched Profiles -->
+                <div id="matchedProfiles">
+                    <!-- Matched profiles will be injected here -->
+                </div>
+
+                <!-- Pagination Controls -->
+                <div id="paginationControls" class="text-center mt-4">
+                    <!-- Pagination controls will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h5 class="mb-2">Processing Your Search</h5>
+            <p class="text-muted mb-0">Finding the best candidates for you...</p>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    <div id="alertContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000; max-width: 400px;"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let currentQuery = '';
+        let searchData = null;
+        let currentPage = 1;
+
+        // Form submission
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            currentPage = 1;
+            performSearch();
+        });
+
+        // Enhance prompt button
+        document.getElementById('enhanceBtn').addEventListener('click', function() {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                showAlert('Please enter a query first', 'warning');
+                return;
+            }
+            enhancePrompt(query);
+        });
+
+        async function enhancePrompt(query) {
+            try {
+                showLoading(true, 'Enhancing your query...');
+                const response = await fetch('/enhance_prompt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('queryInput').value = data.enhanced_query;
+                    showAlert('Query enhanced successfully!', 'success');
+                } else {
+                    showAlert(data.error || 'Failed to enhance query', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error enhancing query: ' + error.message, 'danger');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function performSearch(page = 1) {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                showAlert('Please enter a search query', 'warning');
+                return;
+            }
+
+            currentQuery = query;
+            currentPage = page;
+
+            try {
+                if (page === 1) {
+                    showLoading(true, 'Analyzing your query...');
+
+                    const parseResponse = await fetch('/parse_query', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query })
+                    });
+
+                    const parseData = await parseResponse.json();
+
+                    if (parseData.success) {
+                        showQueryPreview(parseData.parsed_data);
+
+                        if (parseData.is_indian === false) {
+                            showAlert('Our platform currently supports searches within India only', 'warning');
+                            showLoading(false);
+                            return;
+                        }
+                    } else {
+                        showAlert(parseData.error || 'Failed to parse query', 'danger');
+                        showLoading(false);
+                        return;
+                    }
+                }
+
+                showLoading(true, `Searching candidates for page ${page}...`);
+
+                const searchResponse = await fetch('/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query, page: page })
+                });
+
+                const data = await searchResponse.json();
+
+                if (data.success) {
+                    searchData = data;
+                    displayResults(data);
+                    const enrichMessage = data.is_live_enriched ? 
+                        `Live enriched ${data.matched_count} profiles on page ${page}!` : 
+                        `Found ${data.matched_count} profiles on page ${page}!`;
+                    showAlert(enrichMessage, 'success');
+                } else {
+                    showAlert(data.error || 'Search failed', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error performing search: ' + error.message, 'danger');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function showQueryPreview(parsedData) {
+            const preview = document.getElementById('queryPreview');
+            const content = document.getElementById('previewContent');
+
+            content.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <strong>Job Title:</strong><br>
+                        <span class="text-primary">${parsedData.job_title || parsedData.job_role || 'Not specified'}</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Skills:</strong><br>
+                        <span class="text-primary">${parsedData.skills || parsedData.key_skills ? (parsedData.skills || parsedData.key_skills).join(', ') : 'Not specified'}</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Experience:</strong><br>
+                        <span class="text-primary">${parsedData.experience_level || 'Not specified'}</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Location:</strong><br>
+                        <span class="text-primary">${parsedData.location ? parsedData.location.join(', ') : 'Not specified'}</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Work Preference:</strong><br>
+                        <span class="text-primary">${parsedData.work_preference || 'Not specified'}</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Job Type:</strong><br>
+                        <span class="text-primary">${parsedData.job_type || 'Not specified'}</span>
+                    </div>
+                </div>
+            `;
+
+            preview.style.display = 'block';
+            preview.classList.add('fade-in');
+        }
+
+        function displayResults(data) {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.style.display = 'block';
+            resultsSection.classList.add('fade-in');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            displaySummary(data);
+            displayPaginationInfo(data);
+            displayMatchedProfiles(data.matched_profiles);
+            displayPaginationControls(data);
+        }
+
+        function displaySummary(data) {
+            const summary = document.getElementById('resultsSummary');
+            summary.innerHTML = `
+                <div class="col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-number">${data.matched_count}</div>
+                        <div class="stat-label">Profiles on this Page</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-number">${data.total_matched || data.matched_count}</div>
+                        <div class="stat-label">Total Matched Profiles</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayPaginationInfo(data) {
+            const info = document.getElementById('paginationInfo');
+            const enrichStatus = data.is_live_enriched ? 
+                '<span class="badge bg-success ms-2">Live Enriched</span>' : '';
+            
+            info.innerHTML = `
+                <div class="pagination-info text-center">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Showing page ${data.current_page || 1} of ${data.total_pages || 1} 
+                    (${data.matched_count} profiles on this page, ${data.total_matched || data.matched_count} total)
+                    ${enrichStatus}
+                </div>
+            `;
+        }
+
+        function displayPaginationControls(data) {
+            const controls = document.getElementById('paginationControls');
+            const currentPage = data.current_page || 1;
+            const totalPages = data.total_pages || 1;
+            const hasNext = data.has_next || false;
+            const hasPrev = data.has_prev || false;
+
+            if (totalPages <= 1) {
+                controls.innerHTML = '';
+                return;
+            }
+
+            let html = '<nav><ul class="pagination justify-content-center">';
+
+            html += `
+                <li class="page-item ${!hasPrev ? 'disabled' : ''}">
+                    <button class="page-link" onclick="goToPage(${currentPage - 1})" ${!hasPrev ? 'disabled' : ''}>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                </li>
+            `;
+
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+
+            if (startPage > 1) {
+                html += `<li class="page-item"><button class="page-link" onclick="goToPage(1)">1</button></li>`;
+                if (startPage > 2) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <button class="page-link" onclick="goToPage(${i})">${i}</button>
+                    </li>
+                `;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                html += `<li class="page-item"><button class="page-link" onclick="goToPage(${totalPages})">${totalPages}</button></li>`;
+            }
+
+            html += `
+                <li class="page-item ${!hasNext ? 'disabled' : ''}">
+                    <button class="page-link" onclick="goToPage(${currentPage + 1})" ${!hasNext ? 'disabled' : ''}>
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </li>
+            `;
+
+            html += '</ul></nav>';
+            controls.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            if (page < 1) return;
+            performSearch(page);
+        }
+
+        function displayMatchedProfiles(profiles) {
+            const container = document.getElementById('matchedProfiles');
+            
+            console.log('Displaying profiles:', profiles);
+
+            if (!profiles || profiles.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No valid profiles found for this page. Try adjusting your search criteria.
+                    </div>`;
+                return;
+            }
+
+            let html = '<h3 class="mb-4 text-center"><i class="fas fa-users me-2"></i>Matched Candidates</h3>';
+
+            profiles.forEach((profile) => {
+                // Handle both field naming conventions
+                const name = profile.fullName || profile.name || 'Unknown';
+                const location = profile.addressWithCountry || profile.location || 'Location not specified';
+                const linkedinUrl = profile.linkedinUrl || profile.linkedin_url || '#';
+                const profilePic = profile.profilePic || profile.profile_pic || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face';
+                
+                const skills = parseSkills(profile.skills);
+                const experiences = parseExperiences(profile.experiences || profile.experience);
+                const openToWork = checkOpenToWork(experiences);
+                const scoreBreakdown = profile.score_breakdown || {};
+                const totalExp = scoreBreakdown.total_experience_years || 0;
+                
+                console.log('Rendering profile:', name, 'Score:', profile.score);
+
+                html += `
+                    <div class="profile-card fade-in">
+                        <div class="profile-header">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center">
+                                    <img src="${profilePic}" 
+                                         class="profile-image" alt="Profile Picture">
+                                    <div class="mt-3">
+                                        ${getScoreBadge(profile.score)}
+                                    </div>
+                                    <div class="mt-2 text-muted small">
+                                        <i class="fas fa-clock me-1"></i>${totalExp} years exp
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <div class="profile-name">${name}</div>
+                                            ${profile.headline ? `<div class="profile-headline">${profile.headline}</div>` : ''}
+                                        </div>
+                                        <a href="${linkedinUrl}" target="_blank" class="btn btn-primary">
+                                            <i class="fab fa-linkedin me-2"></i>View Profile
+                                        </a>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-sm-6">
+                                            <div class="info-item">
+                                                <i class="fas fa-map-marker-alt info-icon"></i>
+                                                <span>${location}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="info-item">
+                                                <i class="fas fa-envelope info-icon"></i>
+                                                <span>${profile.email || 'Email not available'}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="info-item">
+                                                <i class="fas fa-briefcase info-icon"></i>
+                                                <span class="badge ${openToWork ? 'bg-success' : 'bg-secondary'}">
+                                                    ${openToWork ? 'Open to Work' : 'Currently Employed'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4">
+                            ${skills.length > 0 ? `
+                                <div class="mb-4">
+                                    <h6 class="mb-3"><i class="fas fa-cogs me-2"></i>Skills</h6>
+                                    <div class="skills-container">
+                                        ${skills.slice(0, 12).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                                        ${skills.length > 12 ? '<span class="skill-tag">+' + (skills.length - 12) + ' more</span>' : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${profile.about ? `
+                                <div class="mb-4">
+                                    <h6 class="mb-3"><i class="fas fa-user me-2"></i>About</h6>
+                                    <p class="text-muted">${profile.about.length > 300 ? profile.about.substring(0, 300) + '...' : profile.about}</p>
+                                </div>
+                            ` : ''}
+
+                            ${experiences.length > 0 ? `
+                                <div>
+                                    <h6 class="mb-3"><i class="fas fa-briefcase me-2"></i>Recent Experience</h6>
+                                    ${experiences.slice(0, 3).map(exp => `
+                                        <div class="mb-3 p-3 bg-light rounded">
+                                            <div class="fw-semibold text-primary">${exp.title || 'Position not specified'}</div>
+                                            <div class="text-muted small">${exp.subtitle || 'Company not specified'}</div>
+                                            <div class="text-muted small mt-1">
+                                                <i class="fas fa-calendar-alt me-1"></i>${exp.caption || 'Duration not specified'}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function parseSkills(skills) {
+            if (Array.isArray(skills)) return skills.map(s => typeof s === 'object' ? s.title : s).filter(Boolean);
+            if (typeof skills === 'string') {
+                try { return JSON.parse(skills).map(s => typeof s === 'object' ? s.title : s).filter(Boolean); }
+                catch { return []; }
+            }
+            return [];
+        }
+
+        function parseExperiences(experiences) {
+            if (Array.isArray(experiences)) return experiences;
+            if (typeof experiences === 'string') {
+                try { return JSON.parse(experiences); }
+                catch { return []; }
+            }
+            return [];
+        }
+
+        function checkOpenToWork(experiences) {
+            return !experiences.some(exp => exp.caption && exp.caption.includes('Present'));
+        }
+
+        function getScoreBadge(score) {
+            if (!score) return '<span class="score-badge score-none">No Score</span>';
+            if (score >= 80) return `<span class="score-badge score-excellent">Excellent: ${score}</span>`;
+            if (score >= 60) return `<span class="score-badge score-good">Good: ${score}</span>`;
+            if (score >= 40) return `<span class="score-badge score-fair">Fair: ${score}</span>`;
+            return `<span class="score-badge score-poor">Poor: ${score}</span>`;
+        }
+
+        function showLoading(show, message = 'Processing your search...') {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.querySelector('p').textContent = message;
+                overlay.style.display = 'flex';
+            } else {
+                overlay.style.display = 'none';
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const container = document.getElementById('alertContainer');
+            const alertId = 'alert-' + Date.now();
+
+            const alertHTML = `
+                <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${getAlertIcon(type)} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', alertHTML);
+
+            setTimeout(() => {
+                const alertElement = document.getElementById(alertId);
+                if (alertElement) alertElement.remove();
+            }, 5000);
+        }
+
+        function getAlertIcon(type) {
+            const icons = {
+                'success': 'check-circle',
+                'danger': 'exclamation-triangle',
+                'warning': 'exclamation-circle',
+                'info': 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
+    </script>
+</body>
+</html>
