@@ -9,21 +9,35 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# Initialize clients
 def setup_openai_clients():
-    embedding_client = AzureOpenAI(
-        api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-        api_version="2024-02-01",
-        azure_endpoint="https://job-recruiting-bot.openai.azure.com/"
-    )
+    try:
+        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://job-recruiting-bot.openai.azure.com/")
+        api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2024-02-01")
 
-    chat_client = AzureOpenAI(
-        api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-        api_version="2024-12-01-preview",
-        azure_endpoint="https://job-recruiting-bot.openai.azure.com/"
-    )
+        if not api_key:
+            st.error("Missing environment variable: AZURE_OPENAI_API_KEY")
+            st.stop()
 
-    return embedding_client, chat_client
+        embedding_client = AzureOpenAI(
+            api_key=api_key,
+            api_version=api_version,
+            azure_endpoint=endpoint,
+        )
+
+        chat_client = AzureOpenAI(
+            api_key=api_key,
+            api_version=api_version,
+            azure_endpoint=endpoint,
+        )
+
+        return embedding_client, chat_client
+
+    except Exception as e:
+        # Hide sensitive info in Streamlit Cloud
+        st.error("⚠️ OpenAI client setup failed. Please verify environment variables.")
+        st.stop()
+
 
 
 embedding_client, chat_client = setup_openai_clients()
