@@ -11,33 +11,33 @@ load_dotenv()
 
 def setup_openai_clients():
     try:
-        api_key = os.getenv("AZURE_OPENAI_API_KEY")
-        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://job-recruiting-bot.openai.azure.com/")
-        api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2024-02-01")
+        # Prefer Streamlit secrets if available
+        api_key = st.secrets.get("AZURE_OPENAI_API_KEY") if "AZURE_OPENAI_API_KEY" in st.secrets else os.getenv("AZURE_OPENAI_API_KEY")
+        endpoint = st.secrets.get("AZURE_OPENAI_ENDPOINT") if "AZURE_OPENAI_ENDPOINT" in st.secrets else os.getenv("AZURE_OPENAI_ENDPOINT")
+        api_version = st.secrets.get("AZURE_OPENAI_API_VERSION") if "AZURE_OPENAI_API_VERSION" in st.secrets else os.getenv("AZURE_OPENAI_API_VERSION")
 
-        if not api_key:
-            st.error("Missing environment variable: AZURE_OPENAI_API_KEY")
+        if not api_key or not endpoint:
+            st.error("⚠️ Missing required Azure OpenAI configuration. Please check your Streamlit secrets.")
             st.stop()
 
         embedding_client = AzureOpenAI(
             api_key=api_key,
-            api_version=api_version,
+            api_version=api_version or "2024-02-01",
             azure_endpoint=endpoint,
         )
 
         chat_client = AzureOpenAI(
             api_key=api_key,
-            api_version=api_version,
+            api_version=api_version or "2024-02-01",
             azure_endpoint=endpoint,
         )
 
+        st.success("✅ Azure OpenAI client initialized successfully!")
         return embedding_client, chat_client
 
     except Exception as e:
-        # Hide sensitive info in Streamlit Cloud
-        st.error("⚠️ OpenAI client setup failed. Please verify environment variables.")
+        st.error(f"🚨 OpenAI client setup failed: {e}")
         st.stop()
-
 
 
 embedding_client, chat_client = setup_openai_clients()
