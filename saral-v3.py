@@ -8,7 +8,8 @@ from nlp_v3 import (
     get_query_embedding,
     perform_semantic_search,
     gpt_build_dork,
-    chat_client
+    chat_client,
+    embedding_client
 )
 from serp_v3 import query_making, serp_api_call
 from apify_v3 import apify_call
