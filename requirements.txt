@@ -1,8 +1,7 @@
-openai==1.30.1
-streamlit==1.31.0
-rich==13.7.1
+openai
+streamlit
 psycopg2-binary
-numpy==1.26.3
-python-dotenv==1.0.1
-requests==2.31.0
-apify-client==1.6.3
+numpy
+python-dotenv
+requests
+apify-client
