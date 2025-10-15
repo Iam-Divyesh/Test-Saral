@@ -1,3 +1,9 @@
+import os
+
+# 🚫 Disable Streamlit Cloud proxy (this is the real fix)
+os.environ["NO_PROXY"] = "*"
+os.environ["HTTP_PROXY"] = ""
+os.environ["HTTPS_PROXY"] = ""
 
 from openai import AzureOpenAI
 import os
