@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SERP_API_KEY = os.getenv("SERP_API_KEY")
+SERP_API_KEY = os.getenv("SERP_API_KEY","2ea94e751697921f9a04a148025f4dec7943956cb72ba83d7c95e15fe9c2a4db")
+
 
 import re
 
