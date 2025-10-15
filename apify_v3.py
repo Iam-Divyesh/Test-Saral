@@ -5,7 +5,8 @@ import os
 
 load_dotenv()
 
-APIFY_API_KEY = os.getenv("APIFY_API_TOKEN")
+APIFY_API_KEY = os.getenv("APIFY_API_TOKEN","apify_api_vKN12dmsygsgHxks7bJptCid6YQdej2jw7Sd")
+
 client = ApifyClient(APIFY_API_KEY)
 
 def apify_call(linkedin_urls: dict):
