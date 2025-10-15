@@ -11,41 +11,52 @@ from functools import lru_cache
 load_dotenv()
 
 # ---------- CONFIG ----------
-AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
-AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY", "DYDIgzyMqs13LSnchyjS6oLhd8Ck3s8sq8PU4L6cRD5S25hai5HvJQQJ99BFACYeBjFXJ3w3AAABACOG7CPw")
+AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT", "https://job-recruiting-bot.openai.azure.com/")
 
-# Use different API-version strings when appropriate
+# API versions (embedding + chat)
 AZURE_OPENAI_API_VERSION_EMBEDDING = os.getenv("AZURE_OPENAI_API_VERSION_EMBEDDING", "2024-02-01")
 AZURE_OPENAI_API_VERSION_CHAT = os.getenv("AZURE_OPENAI_API_VERSION_CHAT", "2024-12-01-preview")
 
-# Models
+# Deployed model names
+# 👇 make sure these match EXACTLY your Azure deployments
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 CHAT_MODEL = os.getenv("CHAT_MODEL", "gpt-5-mini")
 
 if not AZURE_OPENAI_API_KEY or not AZURE_OPENAI_ENDPOINT:
-    st.error("Missing AZURE_OPENAI_API_KEY or AZURE_OPENAI_ENDPOINT in environment variables.")
-    # Depending on your app flow, you may want to raise or stop execution here
-    # raise RuntimeError("Missing Azure OpenAI configuration")
-
+    st.error("❌ Missing Azure credentials. Please check your AZURE_OPENAI_API_KEY and AZURE_OPENAI_ENDPOINT.")
+    st.stop()
 
 # ---------- CLIENT INITIALIZATION ----------
 def setup_openai_clients():
-    """Create separate AzureOpenAI clients for embeddings and chat (different api versions)."""
-    embedding_client = AzureOpenAI(
-        api_key=AZURE_OPENAI_API_KEY,
-        api_version=AZURE_OPENAI_API_VERSION_EMBEDDING,
-        azure_endpoint=AZURE_OPENAI_ENDPOINT
-    )
+    """Create AzureOpenAI clients for embeddings and chat (with explicit endpoint fix)."""
 
-    chat_client = AzureOpenAI(
-        api_key=AZURE_OPENAI_API_KEY,
-        api_version=AZURE_OPENAI_API_VERSION_CHAT,
-        azure_endpoint=AZURE_OPENAI_ENDPOINT
-    )
+    # Normalize endpoint (ensure trailing slash)
+    endpoint = AZURE_OPENAI_ENDPOINT.strip()
+    if not endpoint.endswith("/"):
+        endpoint += "/"
 
-    return embedding_client, chat_client
+    try:
+        embedding_client = AzureOpenAI(
+            api_key=AZURE_OPENAI_API_KEY,
+            api_version=AZURE_OPENAI_API_VERSION_EMBEDDING,
+            azure_endpoint=endpoint
+        )
+
+        chat_client = AzureOpenAI(
+            api_key=AZURE_OPENAI_API_KEY,
+            api_version=AZURE_OPENAI_API_VERSION_CHAT,
+            azure_endpoint=endpoint
+        )
+
+        return embedding_client, chat_client
+    except Exception as e:
+        st.error(f"❌ Failed to initialize Azure clients: {e}")
+        raise
 
 embedding_client, chat_client = setup_openai_clients()
+
+
 
 
 # ---------- GPT-ENHANCED QUERY PARSING ----------
