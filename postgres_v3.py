@@ -12,11 +12,11 @@ def get_connection_pool():
     if connection_pool is None:
         connection_pool = psycopg2.pool.SimpleConnectionPool(
             1, 10,
-            host="localhost",
+            host="43.205.29.110",
             port=5432,
-            database="postgres",
-            user="postgres",
-            password="admin"
+            database="saral_ai",
+            user="saral_user",
+            password="8k$ScgT97y9£>D"
         )
     return connection_pool
 
@@ -41,7 +41,7 @@ def get_data_with_embeddings():
         cur.execute("""
             SELECT id, name, location, email, linkedin_url, headline, 
                    skills, about, experience, profile_pic, embedding
-            FROM profiles
+            FROM temp_profiles
             WHERE embedding IS NOT NULL
         """)
 
@@ -121,7 +121,7 @@ def store_apify_profiles(profiles):
             # Use execute_values for batch insert (much faster)
             from psycopg2.extras import execute_values
             execute_values(cur, """
-                INSERT INTO profiles (
+                INSERT INTO temp_profiles (
                     name, location, email, linkedin_url, headline, 
                     skills, about, experience, profile_pic, embedding
                 ) VALUES %s
