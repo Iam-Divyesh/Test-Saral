@@ -11,22 +11,26 @@ load_dotenv()
 
 def setup_openai_clients():
     try:
-        api_key = st.secrets["AZURE_OPENAI_API_KEY"]
-        endpoint = st.secrets["AZURE_OPENAI_ENDPOINT"]
-        api_version = st.secrets.get("AZURE_OPENAI_API_VERSION", "2024-02-01")
+        # --- Direct credentials (for private/internal use only) ---
+        AZURE_OPENAI_API_KEY = "DYDIgzyMqs13LSnchyjS6oLhd8Ck3s8sq8PU4L6cRD5S25hai5HvJQQJ99BFACYeBjFXJ3w3AAABACOG7CPw"
+        AZURE_OPENAI_ENDPOINT = "https://job-recruiting-bot.openai.azure.com/"
+        AZURE_OPENAI_API_VERSION = "2024-02-01"
 
-        # Avoid passing Streamlit proxy layer
+        SERP_API_KEY = "2ea94e751697921f9a04a148025f4dec7943956cb72ba83d7c95e15fe9c2a4db"
+        APIFY_API_TOKEN = "apify_api_vKN12dmsygsgHxks7bJptCid6YQdej2jw7Sd"
+
+        # --- Setup Azure OpenAI clients ---
         client_args = dict(
-            api_key=api_key,
-            api_version=api_version,
-            azure_endpoint=endpoint
+            api_key=AZURE_OPENAI_API_KEY,
+            api_version=AZURE_OPENAI_API_VERSION,
+            azure_endpoint=AZURE_OPENAI_ENDPOINT
         )
 
         embedding_client = AzureOpenAI(**client_args)
         chat_client = AzureOpenAI(**client_args)
 
         st.success("✅ Azure OpenAI clients initialized successfully.")
-        return embedding_client, chat_client
+        return embedding_client, chat_client, SERP_API_KEY, APIFY_API_TOKEN
 
     except TypeError as e:
         if "proxies" in str(e):
@@ -34,7 +38,9 @@ def setup_openai_clients():
         else:
             st.error(f"🚨 OpenAI client setup failed: {e}")
         st.stop()
-
+    except Exception as e:
+        st.error(f"🚨 Unexpected error: {e}")
+        st.stop()
 
 embedding_client, chat_client = setup_openai_clients()
 
