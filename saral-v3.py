@@ -61,7 +61,16 @@ if st.button("🔍 Search Candidates", use_container_width=True):
 
     with st.spinner("Analyzing query with GPT..."):
         enhanced_query = enhance_query_with_gpt(user_input)
+
+    try:
         query_embedding = get_query_embedding(user_input)
+        if query_embedding:
+            st.success(f"✅ Embedding created successfully (length: {len(query_embedding)})")
+        else:
+            st.error("❌ No embedding returned — check your embedding model name or Azure deployment.")
+    except Exception as e:
+        st.error(f"❌ Embedding creation failed: {e}")
+        query_embedding = None
 
     main_progress.progress(0.10)
     status_text.text("Query enhanced and embedded")
