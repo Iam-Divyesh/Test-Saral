@@ -15,40 +15,29 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+
+
+AZURE_OPENAI_API_KEY = "DYDIgzyMqs13LSnchyjS6oLhd8Ck3s8sq8PU4L6cRD5hai5HvJQQJ99BFACYeBjFXJ3w3AAABACOG7CPw"
+AZURE_OPENAI_ENDPOINT = "https://job-recruiting-bot.openai.azure.com/"
+AZURE_OPENAI_API_VERSION = "2024-02-01"
+
 def setup_openai_clients():
-    try:
-        # --- Direct credentials (for private/internal use only) ---
-        AZURE_OPENAI_API_KEY = "DYDIgzyMqs13LSnchyjS6oLhd8Ck3s8sq8PU4L6cRD5S25hai5HvJQQJ99BFACYeBjFXJ3w3AAABACOG7CPw"
-        AZURE_OPENAI_ENDPOINT = "https://job-recruiting-bot.openai.azure.com/"
-        AZURE_OPENAI_API_VERSION = "2024-02-01"
-
-        SERP_API_KEY = "2ea94e751697921f9a04a148025f4dec7943956cb72ba83d7c95e15fe9c2a4db"
-        APIFY_API_TOKEN = "apify_api_vKN12dmsygsgHxks7bJptCid6YQdej2jw7Sd"
-
-        # --- Setup Azure OpenAI clients ---
-        client_args = dict(
-            api_key=AZURE_OPENAI_API_KEY,
-            api_version=AZURE_OPENAI_API_VERSION,
-            azure_endpoint=AZURE_OPENAI_ENDPOINT
-        )
-
-        embedding_client = AzureOpenAI(**client_args)
-        chat_client = AzureOpenAI(**client_args)
-
-        st.success("✅ Azure OpenAI clients initialized successfully.")
-        return embedding_client, chat_client, SERP_API_KEY, APIFY_API_TOKEN
-
-    except TypeError as e:
-        if "proxies" in str(e):
-            st.warning("⚠️ Streamlit Cloud proxy conflict detected. Try pinning openai==1.30.1 in requirements.txt.")
-        else:
-            st.error(f"🚨 OpenAI client setup failed: {e}")
-        st.stop()
-    except Exception as e:
-        st.error(f"🚨 Unexpected error: {e}")
-        st.stop()
+    embedding_client = AzureOpenAI(
+        api_key=AZURE_OPENAI_API_KEY,
+        api_version=AZURE_OPENAI_API_VERSION,
+        azure_endpoint=AZURE_OPENAI_ENDPOINT
+    )
+    chat_client = AzureOpenAI(
+        api_key=AZURE_OPENAI_API_KEY,
+        api_version=AZURE_OPENAI_API_VERSION,
+        azure_endpoint=AZURE_OPENAI_ENDPOINT
+    )
+    return embedding_client, chat_client
 
 embedding_client, chat_client = setup_openai_clients()
+
+
+
 
 EMBEDDING_MODEL = "text-embedding-3-small"
 CHAT_MODEL = "gpt-5-mini"
